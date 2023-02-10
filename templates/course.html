@@ -1,0 +1,154 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+	#course li{
+		list-style-type: none;
+	}
+</style>
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3">Course</h1>
+
+					<div class="row">
+						<div class="col-md-3 col-xl-2">
+
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Courses</h5>
+								</div>
+
+								<ul class="list-group list-group-flush" id="course">
+									<li>
+										<a class="list-group-item list-group-item-action active" href="{% url 'course-url' %}"><i class="align-middle" ></i>Title</a>
+									</li>
+									<li>
+										<a class="list-group-item list-group-item-action" href="{% url 'course-item-url' %}"><i class="align-middle" ></i>Items</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="col-md-9 col-xl-10">
+							<div class="tab-content">
+								<div class="tab-pane fade show active" id="title" role="tabpanel">
+
+									<div class="card">
+										<div class="card-header">
+											<div class="card-actions float-right">
+												<div class="dropdown show"></div>
+											</div>
+											<h5 class="card-title mb-0">Title info</h5>
+										</div>
+										<div class="card-body">
+											{% for i in course %}
+											<div class="row">
+												<div class="col-6">
+													<div class="card">
+														<div class="card-header">
+															<h5 class="card-title mb-0">{{ i.title_uz }}</h5>
+														</div>
+														<div class="card-body">
+															<p class="card-text">{{ i.text_uz }}</p>
+														</div>
+													</div>
+												</div>
+												<div class="col-6">
+													<div class="card">
+														<div class="card-header">
+															<h5 class="card-title mb-0">{{ i.title_ru }}</h5>
+														</div>
+														<div class="card-body">
+															<p class="card-text">{{ i.text_ru }}</p>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<button type="button" class="btn btn-primary ml-3" data-bs-toggle="modal" data-bs-target="#courseeditMD{{ i.id }}"><i class="fas fa-edit"></i> Edit</button>
+												<div class="modal fade" id="courseeditMD{{ i.id }}" tabindex="-1" aria-hidden="true" style="display: none;">
+													<div class="modal-dialog modal-dialog-centered" role="document">
+														<div class="modal-content">
+															<div class="modal-header">
+																<h5 class="modal-title">Edit Course</h5>
+																<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+															</div>
+															<form action="{% url 'update-course-url' %}" method="post">
+																{% csrf_token %}
+																<div class="modal-body m-3">
+																	<label class="col-form-label col-sm-2">Title</label>
+																	<input class="form-control" type="text" name="title_uz" value="{{ i.title_uz }}" required placeholder="Uz">
+																	<br>
+																	<input class="form-control" type="text" name="title_ru" value="{{ i.title_ru }}" required placeholder="Ru">
+																	<label class="col-form-label col-sm-2">Text</label>
+																	<textarea class="form-control" rows="2" name="text_uz" placeholder="Uz">{{ i.text_uz }}</textarea>
+																	<br>
+																	<textarea class="form-control" rows="2" name="text_ru" placeholder="Ru">{{ i.text_ru }}</textarea>
+																</div>
+																<div class="modal-footer">
+																	<input type="hidden" name="course_id" value="{{ i.id }}">
+																	<button type="submit" class="btn btn-primary">Save changes</button>
+																</div>
+															</form>
+														</div>
+													</div>
+												</div>
+												<form action="{% url 'delete-course-url' i.id %}">
+													<button type="button" class="btn btn-primary ml-3" data-bs-toggle="modal" data-bs-target="#deletecourseMD{{ i.id }}"><i class="fas fa-trash"></i> Delete</button>
+													<div class="modal fade" id="deletecourseMD{{ i.id }}" tabindex="-1" aria-hidden="true" style="display: none;">
+														<div class="modal-dialog modal-dialog-centered" style="width:300px" role="document">
+															<div class="modal-content">
+																<div class="modal-header">
+																	<h5 class="modal-title">Are you sure?</h5>
+																</div>
+																<div class="modal-footer">
+																	<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+																	<button type="submit" class="btn btn-danger">Delete</button>
+																</div>
+															</div>
+														</div>
+													</div>
+												</form>
+											</div>
+											{% endfor %}
+											{% if course %}
+											{% else %}
+											<form action="{% url 'create-course-url' %}" method="post">
+												{% csrf_token %}
+												<div class="row">
+													<div class="col-6">
+														<div class="form-group">
+															<label >Title</label>
+															<input type="text" name="title_uz" class="form-control" placeholder="Uz">
+														</div>
+														<div class="form-group">
+															<label >Text</label>
+															<textarea rows="2" name="text_uz" class="form-control"placeholder="Uz"></textarea>
+														</div>
+													</div>
+													<div class="col-6">
+														<div class="form-group">
+															<label>Title</label>
+															<input type="text" name="title_ru" class="form-control"placeholder="Ru">
+														</div>
+														<div class="form-group">
+															<label >Text</label>
+															<textarea rows="2" name="text_ru" class="form-control"placeholder="Ru"></textarea>
+														</div>
+													</div>
+												</div>
+												<button type="submit" class="btn btn-primary">Create</button>
+											</form>
+											{% endif %}
+										</div>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</main>
+{% endblock content %}

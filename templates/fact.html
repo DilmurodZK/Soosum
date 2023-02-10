@@ -1,0 +1,300 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="main">
+			<main class="content">
+				<div class="container-fluid p-0">
+					<div class="row">
+						<div class="col-10">
+							<h1 class="h3 mb-3">Faktlar</h1>
+						</div>
+						<div class="col-2">
+							{% if facts %}
+							{% else %}
+							<button class="btn btn-primary float-right mr-3" data-toggle="modal" data-target="#createResult"><i class="fas fa-plus"></i> Create</button>
+							<div class="modal fade" id="createResult" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+								<div class="modal-dialog modal-dialog-centered" role="document">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title">Create Result</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">×</span>
+											</button>
+										</div>
+										<div class="card">
+											<div class="card-body">
+												<form action="{% url 'create-facts-url' %}" method="post" enctype="multipart/form-data">
+													{% csrf_token %}
+													<div class="form-group row">
+														<label class="col-form-label col-sm-2 text-sm-right">Title</label>
+														<div class="col-sm-10">
+															<input type="text" class="form-control" placeholder="Uz" name="title_uz" required>
+														</div>
+													</div>
+													<div class="form-group row">
+														<label class="col-form-label col-sm-2 text-sm-right"></label>
+														<div class="col-sm-10">
+															<input type="text" class="form-control" placeholder="Ru" name="title_ru" required>
+														</div>
+													</div>
+													<div class="form-group row">
+														<label class="col-form-label col-sm-2 text-sm-right">Text</label>
+														<div class="col-sm-10">
+															<textarea class="form-control" placeholder="Uz" rows="3" name="text_uz" required></textarea>
+														</div>
+													</div>
+													<div class="form-group row">
+														<label class="col-form-label col-sm-2 text-sm-right"></label>
+														<div class="col-sm-10">
+															<textarea class="form-control" placeholder="Ru" rows="3" name="text_ru" required></textarea>
+														</div>
+													</div>
+													<div class="form-group row">
+														<div class="col-sm-10 ml-sm-auto">
+															<button type="submit" class="btn btn-primary">Create</button>
+														</div>
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+					{% for i in result %}
+					<div class="card">
+						<div class="card-body">
+						 <div class="row">
+						  	 <div class="col-2 mb-3"><h3>{{ i.title_uz }}</h3></div>
+						  	 <div class="col-8 mb-3">{{ i.text_uz }}</div>
+						  	 <div class="col-2 mb-3">
+								 <button class="btn btn-warning float-right" data-toggle="modal" data-target="#ResultEdit{{ i.id }}"><i class="fas fa-edit"></i> Edit</button>
+								 <div class="modal fade" id="ResultEdit{{ i.id }}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+									 <div class="modal-dialog modal-dialog-centered" role="document">
+										 <div class="modal-content">
+											 <div class="modal-header">
+												 <h5 class="modal-title">Edit Slider</h5>
+												 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+													 <span aria-hidden="true">×</span>
+												 </button>
+											 </div>
+											 <div class="card">
+												 <div class="card-body">
+													 <form action="{% url 'update-facts-url' %}" method="post" enctype="multipart/form-data">
+														 {% csrf_token %}
+														 <div class="form-group row">
+															 <label class="col-form-label col-sm-2 text-sm-right">Title</label>
+															 <div class="col-sm-10">
+																 <input type="text" class="form-control" value="{{ i.title_uz }}" name="title_uz" required>
+															 </div>
+														 </div>
+														 <div class="form-group row">
+															 <label class="col-form-label col-sm-2 text-sm-right"></label>
+															 <div class="col-sm-10">
+																 <input type="text" class="form-control" value="{{ i.title_ru }}" name="title_ru" required>
+															 </div>
+														 </div>
+														 <div class="form-group row">
+															 <label class="col-form-label col-sm-2 text-sm-right">Text</label>
+															 <div class="col-sm-10">
+																 <textarea class="form-control" value="" rows="3" name="text_uz" required>{{ i.text_uz }}</textarea>
+															 </div>
+														 </div>
+														 <div class="form-group row">
+															 <label class="col-form-label col-sm-2 text-sm-right"></label>
+															 <div class="col-sm-10">
+																 <textarea class="form-control" value="" rows="3" name="text_ru" required>{{ i.text_ru }}</textarea>
+															 </div>
+														 </div>
+														 <div class="form-group row">
+															 <div class="col-sm-10 ml-sm-auto">
+																 <input type="hidden" name="result_id" value="{{ i.id }}">
+																 <button type="submit" class="btn btn-primary">Save</button>
+															 </div>
+														 </div>
+													 </form>
+												 </div>
+											 </div>
+										 </div>
+									 </div>
+								 </div>
+						  	 </div>
+						  	 <div class="col-2 mb-3"><h3>{{ i.title_ru }}</h3></div>
+						  	 <div class="col-8 mb-3">{{ i.text_ru }}</div>
+						  	 <div class="col-2 mb-3">
+								 <form action="{% url 'delete-facts-url' i.id %}">
+									 <button type="button" class="btn btn-danger float-right" data-bs-toggle="modal" data-bs-target="#deleteresultMD{{ i.id }}"><i class="fas fa-trash"></i> Delete</button>
+									 <div class="modal fade" id="deleteresultMD{{ i.id }}"  tabindex="-1" aria-hidden="true" style="display: none;">
+										 <div class="modal-dialog modal-dialog-centered" style="width:300px" role="document">
+											 <div class="modal-content">
+												 <div class="modal-header">
+													 <h5 class="modal-title">Are you sure?</h5>
+												 </div>
+												 <div class="modal-footer">
+													 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+													 <button type="submit" class="btn btn-danger">Delete</button>
+												 </div>
+											 </div>
+										 </div>
+									 </div>
+								 </form>
+						  	 </div>
+						 </div>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+				<div class="row">
+					<div class="col-10">
+						<h1 class="h3 mb-3">Result Items</h1>
+					</div>
+					<div class="col-2">
+						<button class="btn btn-primary float-right mr-3" data-toggle="modal" data-target="#createResultItem"><i class="fas fa-plus"></i> Create</button>
+						<div class="modal fade " id="createResultItem" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+							<div class="modal-dialog modal-dialog-centered" role="document">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title">Create Result Item</h5>
+										<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">×</span>
+										</button>
+									</div>
+									<div class="card">
+										<div class="card-body">
+											<form action="{% url 'create-factsitem-url' %}" method="post" enctype="multipart/form-data">
+												{% csrf_token %}
+												<div class="form-group row">
+													<label class="col-form-label col-sm-2 text-sm-right">Text</label>
+													<div class="col-sm-10">
+														<textarea class="form-control" placeholder="Uz" rows="3" name="text_uz" required></textarea>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-form-label col-sm-2 text-sm-right"></label>
+													<div class="col-sm-10">
+														<textarea class="form-control" placeholder="Ru" rows="3" name="text_ru" required></textarea>
+													</div>
+												</div>
+												<div class="form-group row">
+													<label class="col-form-label col-sm-2 text-sm-right">Icon</label>
+													<div class="col-sm-10">
+														<input type="file" name="icon">
+													</div>
+												</div>
+												<div class="form-group row">
+													<div class="col-sm-10 ml-sm-auto">
+														<button type="submit" class="btn btn-primary">Create</button>
+													</div>
+												</div>
+											</form>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="row">
+					{% for i in result_item %}
+					<div class="col-4">
+						<div class="card">
+							<div class="card-body">
+								<div class="card-header">
+									{% if i.status %}
+									<label class="form-check">
+										<input type="checkbox" class="form-check-input" aria-label="completed" checked disabled>
+									</label>
+									{% else %}
+									<label class="form-check">
+										<input type="checkbox" class="form-check-input" aria-label="completed" disabled>
+									</label>
+									{% endif %}
+								</div>
+								<div class="card-body">
+									<div class="row g-0">
+										<div class="col-12 text-center">
+											<img src="{{ i.icon.url }}" width="90" height="90" class="rounded-circle" alt="...">
+										</div>
+										<div class="col-12">
+											<p >{{ i.text_uz }}</p>
+										</div>
+										<div class="col-12">
+											<p>{{ i.text_ru }}</p>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+                          				<button class="btn text-info" data-toggle="modal" data-target="#ResultItem{{ i.id }}">Edit</button>
+										<div class="modal fade" id="ResultItem{{ i.id }}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+											<div class="modal-dialog modal-dialog-centered" role="document">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title">Edit Result Item</h5>
+														<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">×</span>
+														</button>
+													</div>
+													<div class="card">
+														<div class="card-body">
+															<form action="{% url 'update-factsitem-url' %}" method="post" enctype="multipart/form-data">
+																{% csrf_token %}
+																<div class="form-group row">
+																	<label class="col-form-label col-sm-2 text-sm-right">Text</label>
+																	<div class="col-sm-10">
+																		<textarea class="form-control" value="" rows="3" name="text_uz" required>{{ i.text_uz }}</textarea>
+																	</div>
+																</div>
+																<div class="form-group row">
+																	<label class="col-form-label col-sm-2 text-sm-right"></label>
+																	<div class="col-sm-10">
+																		<textarea class="form-control" value="" rows="3" name="text_ru" required>{{ i.text_ru }}</textarea>
+																	</div>
+																</div>
+																<div class="form-group row">
+																	<label class="col-form-label col-sm-2 text-sm-right">Icon</label>
+																	<div class="col-sm-10">
+																		<input type="file" name="icon">
+																	</div>
+																</div>
+																<div class="form-group row">
+																	<div class="col-sm-10 ml-sm-auto">
+																		<input type="hidden" name="item_id" value="{{ i.id }}">
+																		<button type="submit" class="btn btn-primary">Save</button>
+																	</div>
+																</div>
+															</form>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<form action="{% url 'delete-factsitem-url' i.id %}">
+												<button type="button" class="btn text-info" data-bs-toggle="modal" data-bs-target="#deleteresultitemMD">Delete</button>
+												<div class="modal fade" id="deleteresultitemMD"  tabindex="-1" aria-hidden="true" style="display: none;">
+													<div class="modal-dialog modal-dialog-centered" style="width:300px" role="document">
+														<div class="modal-content">
+															<div class="modal-header">
+																<h5 class="modal-title">Are you sure?</h5>
+															</div>
+															<div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+																<button type="submit" class="btn btn-danger">Delete</button>
+															</div>
+														</div>
+													</div>
+												</div>
+										</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+
+			</main>
+		</div>
+{% endblock content %}

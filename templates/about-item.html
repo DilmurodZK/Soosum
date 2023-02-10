@@ -1,0 +1,128 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+	#course li{
+		list-style-type: none;
+	}
+</style>
+<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3">About</h1>
+
+					<div class="row">
+
+						<div class="col-md-9 col-xl-12">
+							<div class="tab-content">
+
+								<div class="tab-pane fade show active" id="{% url 'about-url' %}" role="tabpanel">
+									<div class="card">
+										<div class="card-body">
+											<h5 class="card-title">Ma'lumotlar</h5>
+
+											<form action="{% url 'create-about-url' %}" method="post" enctype="multipart/form-data">
+												{% csrf_token %}
+												<div class="row">
+												<div class="col-5">
+													<div class="form-group">
+														<label>Ma'lumot matni</label>
+														<textarea class="form-control" name="text_uz" rows="3" required placeholder="O`zbekcha matn kiriting"></textarea>
+													</div>
+												</div>
+												<div class="col-5">
+													<div class="form-group">
+														<label>Ma'lumot matni</label>
+														<textarea class="form-control" name="text_ru" rows="3" required placeholder="Ruscha matn kiriting" ></textarea>
+													</div>
+												</div>
+												<div class="col-2">
+													<div class="form-group">
+														<label>Rasmi</label><br>
+														<input type="file" name="image" required>
+													</div>
+												</div>
+												<button type="submit" class="btn btn-primary ml-3">Yaratish</button>
+												</div>
+											</form>
+										</div>
+									</div>
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												{% for i in about %}
+												<div class="col-6">
+													<div class="card">
+														<div class="card-header text-center">
+														</div>
+														<div class="card-body">
+															<div class="row">
+																<div class="col-6">
+																	<h5 class="card-title">{{ i.text_uz }}</h5>
+																	<h5 class="card-title text-muted">{{ i.text_ru }}</h5>
+																</div>
+																<div class="col-6">
+																	<div class="text-center">
+																		<img class="img-fluid rounded-start" alt="..." src="{{ i.image.url }}">
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="card-footer">
+															<button type="button" class="btn float-left" data-bs-toggle="modal" data-bs-target="#editaboutMD{{ i.id }}"><i class="fas fa-edit"></i></button>
+															<div class="modal fade" id="editaboutMD{{ i.id }}" tabindex="-1" aria-hidden="true" style="display: none;">
+																<div class="modal-dialog modal-dialog-centered" role="document">
+																	<div class="modal-content">
+																		<div class="modal-header">
+																			<h5 class="modal-title">O`zgartirish</h5>
+																			<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+																		</div>
+																		<form action="{% url 'update-about-url' %}" method="post" enctype="multipart/form-data">
+																			{% csrf_token %}
+																			<div class="modal-body m-3">
+																				<label class="col-form-label col-sm-2">Nomi</label>
+																				<textarea class="form-control" name="text_uz" rows="3" required>{{ i.text_uz }}</textarea>
+																				<br>
+																				<textarea class="form-control" name="text_ru" rows="3" required>{{ i.text_ru }}</textarea>
+																				<label class="col-form-label col-sm-2">Rasmi</label> <br>
+																				<input type="file" name="image">
+																			</div>
+																			<div class="modal-footer">
+																				<input type="hidden" name="edit_id" value="{{ i.id }}">
+																				<button type="submit" class="btn btn-primary">Saqlash</button>
+																			</div>
+																		</form>
+																	</div>
+																</div>
+															</div>
+															<form action="{% url 'delete-about-url' i.id %}">
+																<button type="button" class="btn float-left" data-bs-toggle="modal" data-bs-target="#deleteaboutMD{{ i.id }}"><i class="fas fa-trash"></i></button>
+																<div class="modal fade" id="deleteaboutMD{{ i.id }}" tabindex="-1" aria-hidden="true" style="display: none;">
+																	<div class="modal-dialog modal-dialog-centered" style="max-width:300px" role="document">
+																		<div class="modal-content">
+																			<div class="modal-header">
+																				<h5 class="modal-title">Ma'lumotni o`chirishni tasdiqlaysizmi?</h5>
+																			</div>
+																			<div class="modal-footer">
+																				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yo`q</button>
+																				<button type="submit" class="btn btn-danger">Ha</button>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</form>
+														</div>
+													</div>
+												</div>
+												{% endfor %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</main>
+{% endblock content %}

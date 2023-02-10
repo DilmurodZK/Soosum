@@ -1,0 +1,191 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="main">
+			<main class="content">
+				<div class="container-fluid p-0">
+					<h1 class="h3 mb-3">Tasks</h1>
+					<div class="row">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-header">
+									<div class="col-12" style="background-color:#f8f9fa; border-radius:4px;">
+										<p class="card-title">Title</p>
+									</div>
+								</div>
+								<table class="table table-stripped">
+									<thead>
+										<tr>
+											<th style="width:20%;">Tilte Uz</th>
+											<th style="width:20%">Title Ru</th>
+											<th style="width:20%;">Text Uz</th>
+											<th style="width:20%">Text Ru</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+									{% for i in task %}
+										<tr>
+											<td>{{ i.title_uz }}</td>
+											<td>{{ i.title_ru }}</td>
+											<td>{{ i.text_uz }}</td>
+											<td>{{ i.text_ru }}</td>
+											<td class="table-action">
+												<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#createtaskMD{{ i.id }}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+												<div class="modal fade" id="createtaskMD{{ i.id }}" tabindex="-1" aria-hidden="true" style="display: none;">
+													<div class="modal-dialog modal-dialog-centered" role="document">
+														<div class="modal-content">
+															<div class="modal-header">
+																<h5 class="modal-title">Edit Task</h5>
+																<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+															</div>
+															<form action="{% url 'update-task-url' %}" method="post">
+																{% csrf_token %}
+																<div class="modal-body m-3">
+																	<label class="col-form-label col-sm-2">Title</label>
+																	<input class="form-control" type="text" name="title_uz" value="{{ i.title_uz }}" required placeholder="Uz">
+																	<br>
+																	<input class="form-control" type="text" name="title_ru" value="{{ i.title_ru }}" required placeholder="Ru">
+																	<label class="col-form-label col-sm-2">Text</label>
+																	<textarea class="form-control" rows="2" name="text_uz" placeholder="Uz">{{ i.text_uz }}</textarea>
+																	<br>
+																	<textarea class="form-control" rows="2" name="text_ru" placeholder="Ru">{{ i.text_ru }}</textarea>
+																</div>
+																<div class="modal-footer">
+																	<input type="hidden" name="task_id" value="{{ i.id }}">
+																	<button type="submit" class="btn btn">Save changes</button>
+																</div>
+															</form>
+														</div>
+													</div>
+												</div>
+												<a href="{% url 'delete-task-url' i.id %}" class="btn btn-danger" style="color:white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
+											</td>
+										</tr>
+									{% endfor %}
+										{% if task %}
+										{% else %}
+										<tr>
+											<form action="{% url 'create-task-url' %}" method="post">
+												{% csrf_token %}
+												<td><input class="form-control" type="text" name="title_uz" required></td>
+												<td><input class="form-control" type="text" name="title_ru" required></td>
+												<td><textarea class="form-control" rows="1" name="text_uz" ></textarea></td>
+												<td><textarea class="form-control" rows="1" name="text_ru" ></textarea></td>
+												<td><button type="submit" class="btn btn-primary">Create</button></td>
+											</form>
+										</tr>
+										{% endif %}
+									</tbody>
+								</table>
+							</div>
+							<div class="card">
+
+								<div class="card-header">
+									<div class="col-12" style="background-color:#f8f9fa; border-radius:4px;">
+										<p class="card-title">Items</p>
+									</div>
+								</div>
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th style="width:40%;">Uz</th>
+											<th style="width:40%">Ru</th>
+											<th>Actions</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<form action="{% url 'create-taskitem-url' %}" method="post">
+												{% csrf_token %}
+												<td><input class="form-control" type="text" name="title_uz" required></td>
+												<td><input class="form-control" type="text" name="title_ru" required></td>
+												<td><button type="submit" class="btn btn-primary">Create</button></td>
+											</form>
+										</tr>
+									{% for i in taskitem %}
+										<tr>
+											<td>{{ i.title_uz }}</td>
+											<td>{{ i.title_ru }}</td>
+											<td class="table-action">
+												{% if i.status %}
+												<form action="{% url 'activate-taskitem-url' i.id %}">
+													<button class="btn btn-success float-left"><i class="fas fa-check"></i></button>
+												</form>
+												{% elif t_len == 10 %}
+												<button type="button" class="btn btn-secondary float-left" data-toggle="modal" data-target="#taskitemMd{{i.id}}"><i class="fas fa-square"></i></button>
+												<div class="modal fade" id="taskitemMd{{i.id}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+													<div class="modal-dialog modal-md" role="document">
+														<div class="modal-content">
+															<div class="modal-header">
+																<h5 class="modal-title">Change active</h5>
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																	<span aria-hidden="true">×</span>
+																</button>
+															</div>
+															{% for x in active_t_item %}
+																<form action="{% url 'taskitem-modal-url' i.id %}" method="post">
+																	{% csrf_token %}
+																	<div class="modal-body">
+																	<div class="row">
+																		<div class="col-5">
+																			<h5>{{ x.title_uz }}</h5>
+																		</div>
+																		<div class="col-5">
+																			<h5>{{ x.title_ru }}</h5>
+																		</div>
+																		<div class="col-2">
+																			<input type="hidden" name="t_item_id" value="{{ x.id }}">
+																			<button class="btn"><i class="fas fa-times"></i></button>
+																		</div>
+																	</div>
+																	</div>
+																</form>
+															{% endfor %}
+														</div>
+													</div>
+												</div>
+												{% else %}
+												<form action="{% url 'activate-taskitem-url' i.id %}">
+													<button class="btn btn-secondary float-left"><i class="fas fa-square"></i></button>
+												</form>
+												{% endif %}
+												<button type="button" class="btn btn-warning ml-1" data-bs-toggle="modal" data-bs-target="#edittaskitemMD{{ i.id }}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit-2 align-middle"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+												<div class="modal fade" id="edittaskitemMD{{ i.id }}" tabindex="-1" aria-hidden="true" style="display: none;">
+													<div class="modal-dialog modal-dialog-centered" role="document">
+														<div class="modal-content">
+															<div class="modal-header">
+																<h5 class="modal-title">Edit Task Item</h5>
+																<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+															</div>
+															<form action="{% url 'update-taskitem-url' %}" method="post">
+																{% csrf_token %}
+																<div class="modal-body m-3">
+																	<label class="col-form-label col-sm-2">Title</label>
+																	<input class="form-control" type="text" name="title_uz" value="{{ i.title_uz }}" required placeholder="Uz">
+																	<br>
+																	<input class="form-control" type="text" name="title_ru" value="{{ i.title_ru }}" required placeholder="Ru">
+																</div>
+																<div class="modal-footer">
+																	<input type="hidden" name="item_id" value="{{ i.id }}">
+																	<button type="submit" class="btn btn">Save changes</button>
+																</div>
+															</form>
+														</div>
+													</div>
+												</div>
+												<a href="{% url 'delete-taskitem-url' i.id %}" class="btn btn-danger" style="color:white"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-trash align-middle"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></a>
+											</td>
+										</tr>
+									{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</main>
+		</div>
+{% endblock content %}

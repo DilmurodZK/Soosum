@@ -1,0 +1,183 @@
+﻿{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<style>
+	#course li{
+		list-style-type: none;
+	}
+</style>
+<main class="content" xmlns:style="http://www.w3.org/1999/xhtml">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3">Course</h1>
+
+					<div class="row">
+						<div class="col-md-3 col-xl-2">
+
+							<div class="card">
+								<div class="card-header">
+									<h5 class="card-title mb-0">Courses</h5>
+								</div>
+
+								<ul class="list-group list-group-flush" id="course">
+									<li>
+										<a class="list-group-item list-group-item-action" href="{% url 'course-url' %}"><i class="align-middle"></i>Title</a>
+									</li>
+									<li>
+										<a class="list-group-item list-group-item-action active" href="{% url 'course-item-url' %}"><i class="align-middle"></i>Items</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="col-md-9 col-xl-10">
+							<div class="tab-content">
+
+								<div class="tab-pane fade show active" id="{% url 'course-item-url' %}" role="tabpanel">
+									<div class="card">
+										<div class="card-body">
+											<h5 class="card-title">Items</h5>
+
+											<form action="{% url 'create-courseitem-url' %}" method="post" enctype="multipart/form-data">
+												{% csrf_token %}
+												<div class="row">
+												<div class="col-4">
+													<div class="form-group">
+														<label>Uz</label>
+														<input type="text" class="form-control" name="title_uz" required>
+													</div>
+												</div>
+												<div class="col-4">
+													<div class="form-group">
+														<label>Ru</label>
+														<input type="text" class="form-control" name="title_ru" required>
+													</div>
+												</div>
+												<div class="col-4">
+													<div class="form-group">
+														<label>Icon</label><br>
+														<input type="file" name="icon" required>
+													</div>
+												</div>
+												<button type="submit" class="btn btn-primary ml-3">Create</button>
+											</form>
+										</div>
+									</div>
+									<div class="card">
+										<div class="card-body">
+											<div class="row">
+												{% for i in c_items %}
+												<div class="col-3">
+													<div class="card">
+														<div class="card-header text-center">
+															<h5 class="card-title">{{ i.title_uz }}</h5>
+															<h6 class="card-subtitle text-muted">{{ i.title_ru }}</h6>
+														</div>
+														<div class="card-body">
+															<div class="text-center">
+																<img class="rounded me-2 mb-2" src="{{ i.icon.url }}" alt="Placeholder" width="140" height="140">
+															</div>
+														</div>
+														<div class="card-footer">
+															{% if i.status %}
+															<form action="{% url 'activate-courseitem-url' i.id %}">
+																<button class="btn float-left"><i class="fas fa-check"></i></button>
+															</form>
+															{% elif c_len == 6 %}
+															<button type="button" class="btn float-left" data-toggle="modal" data-target="#courseitemMd{{i.id}}"><i class="fas fa-square"></i></button>
+															<div class="modal fade" id="courseitemMd{{i.id}}" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+																<div class="modal-dialog modal-md" role="document">
+																	<div class="modal-content">
+																		<div class="modal-header">
+																			<h5 class="modal-title">Change active</h5>
+																			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																				<span aria-hidden="true">×</span>
+																			</button>
+																		</div>
+																		{% for x in active_items %}
+																		<form action="{% url 'courseitem-modal-url' i.id %}" method="post">
+																		{% csrf_token %}
+																			<div class="row mt-3">
+																				<div class="col-2">
+																					<img width="90" height="90" src="{{ x.icon.url }}">
+																				</div>
+																				<div class="col-4">
+																					<h5>{{ x.title_uz }}</h5>
+																				</div>
+																				<div class="col-4">
+																					<h5>{{ x.title_ru }}</h5>
+																				</div>
+																				<div class="col-2">
+																					<input type="hidden" name="modal_id" value="{{ x.id }}">
+																					<button class="btn"><i class="fas fa-times"></i></button>
+																				</div>
+																			</div>
+																		</form>
+																		{% endfor %}
+																	</div>
+																</div>
+															</div>
+															{% else %}
+															<form action="{% url 'activate-courseitem-url' i.id %}">
+																<button class="btn float-left"><i class="fas fa-square"></i></button>
+															</form>
+															{% endif %}
+
+
+															<button type="button" class="btn float-left" data-bs-toggle="modal" data-bs-target="#createtaskMD{{ i.id }}"><i class="fas fa-edit"></i></button>
+															<div class="modal fade" id="createtaskMD{{ i.id }}" tabindex="-1" aria-hidden="true" style="display: none;">
+																<div class="modal-dialog modal-dialog-centered" role="document">
+																	<div class="modal-content">
+																		<div class="modal-header">
+																			<h5 class="modal-title">Edit Course Item</h5>
+																			<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+																		</div>
+																		<form action="{% url 'update-courseitem-url' %}" method="post">
+																			{% csrf_token %}
+																			<div class="modal-body m-3">
+																				<label class="col-form-label col-sm-2">Title</label>
+																				<input class="form-control" type="text" name="title_uz" value="{{ i.title_uz }}" required placeholder="Uz">
+																				<br>
+																				<input class="form-control" type="text" name="title_ru" value="{{ i.title_ru }}" required placeholder="Ru">
+																				<label class="col-form-label col-sm-2">Icon</label> <br>
+																				<input type="file" name="icon">
+																			</div>
+																			<div class="modal-footer">
+																				<input type="hidden" name="item_id" value="{{ i.id }}">
+																				<button type="submit" class="btn btn">Save changes</button>
+																			</div>
+																		</form>
+																	</div>
+																</div>
+															</div>
+															<form action="{% url 'delete-courseitem-url' i.id %}">
+																<button type="button" class="btn float-left" data-bs-toggle="modal" data-bs-target="#deletecourseitemMD{{ i.id }}"><i class="fas fa-trash"></i></button>
+																<div class="modal fade" id="deletecourseitemMD{{ i.id }}" aria-hidden="true" style="display: none;">
+																	<div class="modal-dialog modal-dialog-centered" style="width:300px" role="document">
+																		<div class="modal-content">
+																			<div class="modal-header">
+																				<h5 class="modal-title">Are you sure?</h5>
+																			</div>
+																			<div class="modal-footer">
+																				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+																				<button type="submit" class="btn btn-danger">Delete</button>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</form>
+														</div>
+													</div>
+												</div>
+												{% endfor %}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</main>
+{% endblock content %}

@@ -1,0 +1,138 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+   			<main class="content">
+				<div class="container-fluid p-0">
+
+					<div class="row">
+						<div class="col-12 col-sm-6 col-xl d-flex">
+							<div class="card flex-fill">
+								<div class="card-body py-4">
+									<div class="media">
+										<div class="d-inline-block mt-2 mr-3">
+											<i class="feather-lg text-primary" data-feather="user-plus"></i>
+										</div>
+										<div class="media-body">
+											<h3 class="mb-2">{{ day }}</h3>
+											<div class="mb-0">Oxirgi 24 soatda ariza qoldirgan mijozlar</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-xl d-flex">
+							<div class="card flex-fill">
+								<div class="card-body py-4">
+									<div class="media">
+										<div class="d-inline-block mt-2 mr-3">
+											<i class="feather-lg text-success" data-feather="calendar"></i>
+										</div>
+										<div class="media-body">
+											<h3 class="mb-2">{{ week }}</h3>
+											<div class="mb-0">Oxirgi 7 kunda ariza qoldirgan mijozlar</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-xl d-flex">
+							<div class="card flex-fill">
+								<div class="card-body py-4">
+									<div class="media">
+										<div class="d-inline-block mt-2 mr-3">
+											<i class="feather-lg text-danger" data-feather="calendar"></i>
+										</div>
+										<div class="media-body">
+											<h3 class="mb-2">{{ month }}</h3>
+											<div class="mb-0">So`nggi 30 kunda ariza qoldirgan mijozlar</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-sm-6 col-xl d-flex">
+							<div class="card flex-fill">
+								<div class="card-body py-4">
+									<div class="media">
+										<div class="d-inline-block mt-2 mr-3">
+											<i class="feather-lg text-info" data-feather="users"></i>
+										</div>
+										<div class="media-body">
+											<h3 class="mb-2">{{ count }}</h3>
+											<div class="mb-0">Jami ariza qoldirgan mijozlar</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-12 col-lg-9 d-flex">
+							<div class="card flex-fill w-100">
+								<div class="card-header">
+									<span class="badge badge-primary float-right">Oxirgi 30 ariza qoldirilgan kun</span>
+									<h5 class="card-title mb-0">Mijozlar</h5>
+								</div>
+								<div class="card-body">
+									<div class="chart chart-lg">
+										<canvas id="myChart"></canvas>
+									</div>
+									<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+									<script>
+									  const ctx = document.getElementById('myChart');
+
+									  new Chart(ctx, {
+										type: 'line',
+										data: {
+										  labels: [{% for i in qs %} "{{ i.day }} {{ i.mon }}", {% endfor %}],
+										  datasets: [{
+											label: 'Number of Applications',
+											data: [{% for x in qs %} {{ x.n }}, {% endfor %}],
+											borderWidth: 1
+										  }]
+										},
+										options: {
+										  scales: {
+											y: {
+											  beginAtZero: true
+											}
+										  }
+										}
+									  });
+									</script>
+
+								</div>
+							</div>
+						</div>
+						<div class="col-12 col-lg-3 d-flex">
+							<div class="card flex-fill w-100">
+								<div class="card-header">
+									<h5 class="card-title mb-0">So`nggi 7 mijoz</h5>
+								</div>
+								<div class="card-body">
+									<table class="table">
+										<thead>
+											<tr>
+												<th style="width:35%;">Name</th>
+												<th style="width:30%">Phone</th>
+											</tr>
+										</thead>
+										<tbody>
+										{% for i in all_apps %}
+											<tr>
+												<td>{{ i.name }}</td>
+												<td>{{ i.phone }}</td>
+											</tr>
+										{% endfor %}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</main>
+{% endblock content %}
+
+
