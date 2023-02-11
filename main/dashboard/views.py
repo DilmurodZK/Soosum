@@ -444,21 +444,21 @@ def delete_info_view(request, pk):
 # ********************************* advice *********************************
 def advice_view(request):
     context = {
-        'advice': Advice.objects.last()
+        'advice': Advice.objects.all()
     }
-    return render(request, '', context)
+    return render(request, 'advice.html', context)
 
 
 def create_advice_view(request):
     if request.method == 'POST':
         title_uz = request.POST.get('title_uz')
         title_ru = request.POST.get('title_ru')
-        Advice.objecgts.create(
+        Advice.objects.create(
             title_uz=title_uz,
             title_ru=title_ru,
         )
-        return redirect('')
-    return redirect('')
+        return redirect('advice-url')
+    return redirect('advice-url')
 
 
 def update_advice_view(request, pk):
@@ -469,22 +469,22 @@ def update_advice_view(request, pk):
         advice.title_uz = title_uz
         advice.title_ru = title_ru
         advice.save()
-        return redirect('')
-    return redirect('')
+        return redirect('advice-url')
+    return redirect('advice-url')
 
 
-def delete_advixe_view(requset, pk):
+def delete_advice_view(requset, pk):
     advice = Advice.objects.get(id=pk)
     advice.delete()
-    return redirect('')
+    return redirect('advice-url')
 
 
 # ********************************* adviceitem *********************************
 def adviceitem_view(request):
     context = {
-        'adviceitem': AdviceItem.objects.last()
+        'adviceitem': AdviceItem.objects.all()
     }
-    return render(request, '', context)
+    return render(request, 'advice.html', context)
 
 
 def create_adviceitem_view(request):
@@ -592,3 +592,25 @@ def delete_factsitem_view(request, pk):
     factsitem = FactItem.objects.get(id=pk)
     factsitem.delete()
     return redirect('fact-url')
+
+#
+# def advice(request):
+#     context = {
+#         'advice':Advice.objects.all('-id')
+#     }
+#     return render(request, 'advice.html', context)
+#
+#
+# def create_advice(request):
+#
+#     return redirect('advice-url')
+#
+#
+# def update_advice(request):
+#     return redirect('advice-url')
+#
+#
+# def delete_advice(request):
+#     return redirect('advice-url')
+#
+#

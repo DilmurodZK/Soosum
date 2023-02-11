@@ -53,6 +53,10 @@ urlpatterns = [
 
     # ****************************************** Sarvinoz ********************************************
     # ********************** Advice **********************
+    path('advice/', advice_view, name='advice-url'),
+    path('create-advice/', create_advice_view, name='create-advice-url'),
+    path('update-advice/<int:pk>/', update_advice_view, name='update-advice-url'),
+    path('delete-advice/<int:pk>/', delete_advice_view, name='delete-advice-url'),
 
     # ********************** AdviceItem **********************
 

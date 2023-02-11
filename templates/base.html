@@ -79,8 +79,8 @@
 						</a>
 					</li>
 					<li class="sidebar-item{% if request.path == '/task/' %} active {% endif %}">
-						<a href="#" class="sidebar-link">
-						  <i class="align-middle" data-feather="align-left"></i> <span class="align-middle">Task</span>
+						<a href="{% url 'advice-url' %}" class="sidebar-link">
+						  <i class="align-middle" data-feather="align-left"></i> <span class="align-middle">Advice</span>
 						</a>
 					</li>
 					<li class="sidebar-item{% if request.path == '/fact/' %} active {% endif %}">
